@@ -1,7 +1,8 @@
 require 'gosu'
 
 module GameSettings
-	FONT = './paraaminobenzoic.ttf'
+	RESOURCE_DIR = './resources'
+	FONT = './resources/paraaminobenzoic.ttf'
 	STARTING_LIVES = 1
 	WEB_TIME = 3000
 end
@@ -50,7 +51,7 @@ class SpiderPlayer
 	attr_accessor :x, :y, :lives
 	
 	def initialize
-		@images = Gosu::Image.load_tiles("Spider.png", WIDTH, WIDTH)
+		@images = Gosu::Image.load_tiles("#{GameSettings::RESOURCE_DIR}/Spider.png", WIDTH, WIDTH)
 		@x = @y = 0
 		@vel = 3
 		@lives = GameSettings::STARTING_LIVES 
@@ -96,7 +97,7 @@ class Fly
 	attr_accessor :x, :y, :direction, :speed, :caught
 
 	def initialize(x, y, direction, speed)
-		@images = Gosu::Image.load_tiles("Fly.png", WIDTH, WIDTH)
+		@images = Gosu::Image.load_tiles("#{GameSettings::RESOURCE_DIR}/Fly.png", WIDTH, WIDTH)
 		@x = x
 		@y = y
 		@direction = direction
@@ -136,7 +137,7 @@ class Web
 	attr_accessor :x, :y
 
 	def initialize(x, y)
-		@image = Gosu::Image.new("Web.png")
+		@image = Gosu::Image.new("#{GameSettings::RESOURCE_DIR}/Web.png")
 		@x = x
 		@y = y
 		@time_spun = Gosu.milliseconds
@@ -171,7 +172,7 @@ class BugGame < Gosu::Window
     self.caption = "Spider Defense"
 		self.fullscreen = true
 
-		@background_image = Gosu::Image.new("Background.png", :tileable => true)
+		@background_image = Gosu::Image.new("#{GameSettings::RESOURCE_DIR}/Background.png", :tileable => true)
 
 		@spider = SpiderPlayer.new
 		@spider.moveTo(320, 240)

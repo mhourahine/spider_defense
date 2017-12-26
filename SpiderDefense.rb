@@ -170,7 +170,7 @@ class BugGame < Gosu::Window
   def initialize
     super WIDTH, HEIGHT
     self.caption = "Spider Defense"
-		self.fullscreen = true
+		#self.fullscreen = true
 
 		@background_image = Gosu::Image.new("#{GameSettings::RESOURCE_DIR}/Background.png", :tileable => true)
 
@@ -224,7 +224,7 @@ class BugGame < Gosu::Window
 		# of player
 		spawn_points_x = [*20..(WIDTH/2-100)] + [*(WIDTH/2+100)..WIDTH]
 		spawn_points_y = [*20..(HEIGHT/2-100)] + [*(HEIGHT/2+100)..HEIGHT]
-		20.times { @flies.push(Fly.new(spawn_points_x.sample, spawn_points_y.sample, rand(0..360), 1)) } 
+		15.times { @flies.push(Fly.new(spawn_points_x.sample, spawn_points_y.sample, rand(0..360), 1)) } 
 	end
 
 	# if any flies are near webs, catch them in the web
@@ -323,12 +323,12 @@ class BugGame < Gosu::Window
   
 	def show_game_over
 		text_options = { width: WIDTH, align: :center, font: GameSettings::FONT }
-		game_over_image = Gosu::Image.from_text("Game Over", 100, text_options)
-		game_over_image.draw(0, HEIGHT/2-100, ZOrder::TITLE)
-		
 		if all_caught?
-			game_over_image = Gosu::Image.from_text("You win!", 80, text_options)
-			game_over_image.draw(0, HEIGHT/2, ZOrder::TITLE)
+			game_over_image = Gosu::Image.from_text("You win!", 100, text_options)
+			game_over_image.draw(0, HEIGHT/2-100, ZOrder::TITLE)
+		else
+			game_over_image = Gosu::Image.from_text("Game Over", 100, text_options)
+			game_over_image.draw(0, HEIGHT/2-100, ZOrder::TITLE)
 		end
 
 		restart_image = Gosu::Image.from_text("Press Enter to Start New Game", 25, text_options)

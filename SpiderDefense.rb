@@ -53,7 +53,7 @@ class SpiderPlayer
 	def initialize
 		@images = Gosu::Image.load_tiles("#{GameSettings::RESOURCE_DIR}/Spider.png", WIDTH, WIDTH)
 		@x = @y = 0
-		@vel = 3
+		@vel = 4
 		@lives = GameSettings::STARTING_LIVES 
 	end
 
@@ -184,6 +184,7 @@ class BugGame < Gosu::Window
 	def reset
 		# store time when last web was spun to rate limit
 		@last_web_spin = 0
+		@last_fly_spawn = 1000
 
 		@spider = SpiderPlayer.new
 		@spider.moveTo(320, 240)
@@ -195,7 +196,6 @@ class BugGame < Gosu::Window
 
 	def start
 		reset
-		spawn_flies
 		@running = true
 		@paused = false
 	end
@@ -222,9 +222,20 @@ class BugGame < Gosu::Window
 	def spawn_flies
 		# avoid the middle area to make sure flies aren't spawned on top
 		# of player
-		spawn_points_x = [*20..(WIDTH/2-100)] + [*(WIDTH/2+100)..WIDTH]
-		spawn_points_y = [*20..(HEIGHT/2-100)] + [*(HEIGHT/2+100)..HEIGHT]
-		15.times { @flies.push(Fly.new(spawn_points_x.sample, spawn_points_y.sample, rand(0..360), 1)) } 
+		spawn_points_x = [*0..(@spider.x-100)] + [*(@spider.x+100)..WIDTH]
+		spawn_points_y = [*0..(@spider.y-100)] + [*(@spider.y+100)..HEIGHT]
+
+		# increase fly speed for every 10 spawned
+		fly_speed = @flies.length / 10 + 1 
+
+		if @flies.length == 0
+			10.times { @flies.push(Fly.new(spawn_points_x.sample, spawn_points_y.sample, rand(0..360), fly_speed)) }
+		end
+
+		if Gosu.milliseconds - @last_fly_spawn > 3000
+			@flies.push(Fly.new(spawn_points_x.sample, spawn_points_y.sample, rand(0..360), fly_speed)) 
+			@last_fly_spawn = Gosu.milliseconds
+		end
 	end
 
 	# if any flies are near webs, catch them in the web
@@ -337,6 +348,7 @@ class BugGame < Gosu::Window
 
   def update
 		if @running and not @paused and not @gameover
+			spawn_flies
 			game_controls
 			check_player_collisions
 			move_flies
